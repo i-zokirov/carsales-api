@@ -15,7 +15,8 @@ export default class User {
 
     @Column()
     email: string;
-
+    // @Column()
+    // name: string;
     @Column()
     password: string;
 
