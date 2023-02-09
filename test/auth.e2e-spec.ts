@@ -15,7 +15,7 @@ describe("Authentication System (e2e)", () => {
         await app.init();
     });
 
-    it("/auth/signup (GET)", () => {
+    it("/auth/signup (POST)", () => {
         const newemail = `email${Math.floor(Math.random() * 100)}@email.com`;
         return request(app.getHttpServer())
             .post("/auth/signup")
@@ -26,5 +26,22 @@ describe("Authentication System (e2e)", () => {
                 expect(id).toBeDefined();
                 expect(email).toEqual(newemail);
             });
+    });
+
+    it("/auth/whoami (GET)", async () => {
+        const newemail = `email${Math.floor(Math.random() * 100)}@email.com`;
+        const response = await request(app.getHttpServer())
+            .post("/auth/signup")
+            .send({ email: newemail, password: "123" })
+            .expect(201);
+
+        const cookie = response.get("Set-Cookie");
+
+        const { body } = await request(app.getHttpServer())
+            .get("/auth/whoami")
+            .set("Cookie", cookie)
+            .expect(200);
+
+        expect(body.email).toEqual(newemail);
     });
 });
